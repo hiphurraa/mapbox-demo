@@ -1,0 +1,28 @@
+.popup h3{
+  color: rgb(5, 48, 114);
+}
+
+.mapboxgl-popup-close-button {
+  background-color: rgba(255, 0, 0, 0.596);
+  padding: .2rem;
+  margin: .1rem;
+  border-radius: .5rem;
+}
+
+.mapboxgl-popup-close-button:hover{
+  background-color: rgba(255, 0, 0, 0.911);
+}
+
+.mapboxgl-popup-content {
+  font: 400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
+  padding: 0;
+  width: 180px;
+}
+
+.mapboxgl-popup-content-wrapper {
+  padding: 1%;
+}
+
+@media screen and (max-width: 768px) {
+
+}

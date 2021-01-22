@@ -1,0 +1,33 @@
+{
+	"type": "FeatureCollection",
+	"features": [
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					27.680283,
+					62.896005
+				]
+			},
+			"properties": {
+				"title": "Hurja Solutions Oy",
+				"description": "Huippu firma"
+			}
+		},
+		{
+			"type": "Feature",
+			"geometry": {
+				"type": "Point",
+				"coordinates": [
+					27.681000,
+					62.89196
+				]
+			},
+			"properties": {
+				"title": "Otsikko2",
+				"description": "Selitys2"
+			}
+		}
+	]
+}
