@@ -1,8 +1,9 @@
 import React from 'react';
 import mapboxgl from 'mapbox-gl';
 import NavBar from './NavBar';
-import marker from './marker.png';
+import markerImg from './marker_.png';
 import './MapBox.css';
+import CreateNewMarker from './CreateNewMarker';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiaGlwaHVycmFhIiwiYSI6ImNrazVxd24xNjA4NGQyb29hY2MzcWtyNmkifQ.-9gTy_Q35okDPCEmQlWm9A';
 
@@ -10,42 +11,36 @@ export default class MapBox extends React.Component {
 
     constructor(props) {
         super(props);
+        this.cancelCreatingNewMarker = this.cancelCreatingNewMarker.bind(this);
+        this.markerRef = React.createRef();
         this.state = {
-            lng: 27.681422,
-            lat: 62.89196,
-            zoom: 11.75,
-            data: null
-        }
+            map: null,
+            mapContainer: null,
+            isCreatingNewMarker: false,
+            newMarkerCoordinates: null,
+            newMarkerPopup: null
+        };
     }
 
     componentDidMount() {
 
-        const { lng, lat, zoom } = this.state;
-
         const map = new mapboxgl.Map({
             container: this.mapContainer,
             style: 'mapbox://styles/mapbox/streets-v11',
-            center: [lng, lat],
-            zoom: zoom
+            center: [27.681422, 62.89196],
+            zoom: 11.75
         });
 
-        map.on('move', () => {
-            this.setState({
-                lng: map.getCenter().lng.toFixed(4),
-                lat: map.getCenter().lat.toFixed(4),
-                zoom: map.getZoom().toFixed(2)
-            });
-        });
+        this.setState({map: map, mapContainer: this.mapContainer});
 
-        map.on('load', function () {
+        map.on('load', () => {
+                map.loadImage(markerImg,
+                    (error, image) => {
+                        if (error)
+                            throw error;
+                        map.addImage('marker', image);
 
-            map.loadImage(marker,
-                function (error, image) {
-                    if (error) throw error;
-
-                    map.addImage('marker', image);
-                
-                    fetch("http://127.0.0.1:3001/markers/geojson")
+                        fetch('http://127.0.0.1:3001/markers/geojson')
                         .then(res => res.json())
                         .then((result) => {
                             map.addSource('point', {
@@ -59,87 +54,190 @@ export default class MapBox extends React.Component {
                                 'source': 'point',
                                 'layout': {
                                     'icon-image': "marker",
-                                    'icon-size': 0.3
+                                    'icon-size': 0.8
+                                }
+                            });
+
+                            map.addSource('newPoint', {
+                                type: 'geojson',
+                                data: {type: "FeatureCollection", features: []
+                                }
+                            });
+            
+                            map.addLayer({
+                                'id': 'newPoints',
+                                'type': 'symbol',
+                                'source': 'newPoint',
+                                'layout': {
+                                    'icon-image': "marker",
+                                    'icon-size': 0.8
                                 }
                             });
                         }
                         )
                         .catch((error) => {
                             // Handle errors
-                        })
-                }
-            );
-
-        });
+                        });
+                    }
+                );
+            });
 
         // Click on a marker
-        map.on('click', 'points', function(e) {
-            // Cancel the click event occurring on the map layer
-            e.originalEvent.cancelBubble = true;
+        map.on('click', 'points', (e) => {
+                // Cancel the click event occurring on the map layer
+                e.originalEvent.cancelBubble = true;
 
-            // Get the info of the marker
-            var coordinates = e.features[0].geometry.coordinates.slice();
-            var title = e.features[0].properties.title;
-            var description = e.features[0].properties.description;
-             
-            // Ensure that if the map is zoomed out such that multiple
-            // copies of the feature are visible, the popup appears
-            // over the copy being pointed to.
-            while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-            coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-            }
-            
-            const popupHTML = `<div class="popup"><h3>${title}</h3><p>${description}</p></div>`;
+                // Center the map to the marker
+                map.flyTo({
+                    center: e.features[0].geometry.coordinates
+                });
 
-            new mapboxgl.Popup()
-            .setLngLat(coordinates)
-            .setHTML(popupHTML)
-            .addTo(map);
-        
-        });
+                // Get the info of the marker
+                var coordinates = e.features[0].geometry.coordinates.slice();
+                var title = e.features[0].properties.title;
+                var description = e.features[0].properties.description;
+
+                // Ensure that if the map is zoomed out such that multiple
+                // copies of the feature are visible, the popup appears
+                // over the copy being pointed to.
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+
+                const popupHTML = `<div class="popup"><h3>${title}</h3><p>${description}</p></div>`;
+
+                new mapboxgl.Popup()
+                    .setLngLat(coordinates)
+                    .setHTML(popupHTML)
+                    .addTo(map);
+
+            });
 
         // Click on the map
-        map.on('click', function (e) {
-            // If clicked on a mark, don't do anything
-            if (e.originalEvent.cancelBubble){
-                return;
-            }
+        map.on('click', (e) => {
+                // If clicked on a existing marker, don't do anything
+                if (e.originalEvent.cancelBubble) {
+                    return;
+                }
 
-            var coordinates = [e.lngLat.lng, e.lngLat.lat];
+                var coordinates = [e.lngLat.lng, e.lngLat.lat]
+                this.setState({newMarkerCoordinates: coordinates, isCreatingNewMarker: true});
 
-            const popupHTML =   '<div class="popup-new"><h3>Uusi merkintä</h3><label>Otsikko:</label>'+
-                                '<input type="text"></input><label>Kuvaus:</label><input type="text">'+
-                                '</input><button>Tallenna</button></input><button>Peruuta</button></div>';
+                var newMarkerGeoJson = {
+                    type: "FeatureCollection",
+                    features: [{
+                        'Type': 'Feature',
+                        'geometry': {
+                            'type': 'Point',
+                            'coordinates': coordinates
+                        }
+                    }]
+                };
 
-            new mapboxgl.Popup()
-            .setLngLat(coordinates)
-            .setHTML(popupHTML)
-            .addTo(map);
+                if (map.getSource('newPoint')){
+                    map.getSource('newPoint').setData(newMarkerGeoJson);
+                }
+                
+                if (this.state.newMarkerPopup){
+                    this.state.newMarkerPopup.remove();
+                }
+                
+                // Ensure that if the map is zoomed out such that multiple
+                // copies of the feature are visible, the popup appears
+                // over the copy being pointed to.
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
 
-        });
+                const popupHTML = `<div class="newMarker-popup">Luodaan uutta merkkiä!</div>`;
 
-        map.on('mouseenter', 'points', function () {
-            map.getCanvas().style.cursor = 'pointer';
-        });
+                var popup = new mapboxgl.Popup({closeButton: false, closeOnClick: false})
+                    .setLngLat(coordinates)
+                    .setHTML(popupHTML)
+                    .addTo(map);
 
-        map.on('mouseleave', 'points', function () {
-            map.getCanvas().style.cursor = '';
-        });
+                this.setState({newMarkerPopup: popup})
 
-    }
+            });
+
+        var popup = new mapboxgl.Popup({closeButton: false, closeOnClick: false})
+
+        map.on('mouseenter', 'points', (e) => {
+
+                map.getCanvas().style.cursor = 'pointer';
+
+                // Get the info of the marker
+                var coordinates = e.features[0].geometry.coordinates.slice();
+                var title = e.features[0].properties.title;
+                var description = e.features[0].properties.description;
+
+                // Ensure that if the map is zoomed out such that multiple
+                // copies of the feature are visible, the popup appears
+                // over the copy being pointed to.
+                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                }
+
+                if (description.length > 60){
+                    description = description.slice(0, 57).trim() + '...';
+                }
+
+                const popupHTML = `<div class="popup"><h3>${title}</h3><p>${description}</p></div>`;
+                popup.setLngLat(coordinates).setHTML(popupHTML).addTo(map);
+            });
+
+        map.on('mouseleave', 'points', () => {
+                map.getCanvas().style.cursor = '';
+                popup.remove();
+            });
+
+    } // componentDidMount()
 
     componentWillUnmount(){
                                                         // TODO
     }
 
-    render() {
+    cancelCreatingNewMarker () {
+        if (this.state.isCreatingNewMarker){
+            this.setState({isCreatingNewMarker: false});
+        }
+        if (this.state.newMarkerPopup){
+            this.state.newMarkerPopup.remove();
+        }
+        if (this.state.map){
+            var newMarkerGeoJson = {
+                type: "FeatureCollection",
+                features: []
+            };
+    
+            if (this.state.map.getSource('newPoint')){
+                this.state.map.getSource('newPoint').setData(newMarkerGeoJson);
+            }
+        }
 
-      return (
-        <div>
-            <NavBar></NavBar>
-            <div ref={el => this.mapContainer = el} className="map-container" />
-        </div>
-      );
+    } // cancelCreatingNewMarker()
+
+    render() {
+        const {isCreatingNewMarker, newMarkerCoordinates} = this.state;
+
+        if(isCreatingNewMarker){
+            return (
+                <div>
+                    <NavBar></NavBar>
+                    <div ref={el => this.mapContainer = el} className="map-container" />
+                    <CreateNewMarker cancel={this.cancelCreatingNewMarker} coordinates={newMarkerCoordinates}/>
+                </div>
+              );
+        }
+        else{
+            return (
+                <div>
+                    <NavBar></NavBar>
+                    <div ref={el => this.mapContainer = el} className="map-container" />
+                </div>
+            );
+        }
+
     }
 
 }

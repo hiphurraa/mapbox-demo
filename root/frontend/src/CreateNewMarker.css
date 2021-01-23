@@ -1,0 +1,45 @@
+.newMarker-container {
+    display: inline-block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin: 12px;
+    background-color: #6b5959;
+    color: #ffffff;
+    z-index: 1 !important;
+    padding: .5rem;
+    font-weight: bold;
+    border-radius: .5rem;;
+  }
+
+  fieldset{
+    padding: 1rem;
+  }
+
+  button {
+    margin: 0.5rem 0.5rem 0 0;
+  }
+
+  .save-btn {
+    background-color: rgb(13, 28, 114);
+    border:none;
+    border-radius: .3rem;
+    padding: .3rem;
+    color:rgb(224, 209, 209);
+  }
+
+  .save-btn:hover {
+    background-color: rgb(12, 32, 150);
+  }
+
+  .cancel-btn {
+    background-color: rgb(63, 52, 52);
+    border:none;
+    border-radius: .3rem;
+    padding: .3rem;
+    color: rgb(226, 210, 210);
+  }
+
+  .cancel-btn:hover{
+    background-color: rgb(71, 42, 42);
+  }

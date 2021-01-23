@@ -6,8 +6,8 @@ DROP TABLE IF EXISTS `mapmarker`.`marker` ;
 
 CREATE TABLE IF NOT EXISTS `mapmarker`.`marker` (
   `id` INT(11) UNSIGNED NOT NULL AUTO_INCREMENT,
-  `latitude` VARCHAR(12) NULL,
-  `longitude` VARCHAR(12) NULL,
+  `latitude` VARCHAR(30) NULL,
+  `longitude` VARCHAR(30) NULL,
   `title` VARCHAR(25) NULL,
   `description` VARCHAR(200) NULL,
   PRIMARY KEY (`id`))
