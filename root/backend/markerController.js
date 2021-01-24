@@ -14,25 +14,27 @@ module.exports = {
 
     deleteMarker : function (req, res) {
         var query = '';
+        var id = '';
         try {   
-            const id = req.params.id;
+            id = req.params.id;
             query = `DELETE FROM marker WHERE id = ${id};`;
         }
         catch(any){
             console.log('Error deleting marker: bad request')
-            res.status(400);
+            res.status(400).end();
             return;
         }
+
+        console.log(query);
 
         connection.query(query, function (error, results, fields) {
             if (error) {
                 console.log(`Error deleting marker: ${error.message}`);
-                res.status(500);
+                res.status(500).end();
             } 
             else {
                 console.log('Marker deleted succesfully.')
-                res.status(200);
-                res.json({"status": "Marker deleted succesfully."});
+                res.status(200).end();
             }
         });
     }, // deleteMarker()
@@ -56,18 +58,18 @@ module.exports = {
         }
         catch(any){
             console.log('Error editing marker: bad request');
-            res.status(400);
+            res.status(400).end();
             return;
         }
 
         connection.query(query, function (error, results, fields) {
             if (error) {
                 console.log(`Error editing marker: ${error.message}`);
-                res.status(500);
+                res.status(500).end();
             } 
             else {
                 console.log('Marker edited succesfully.')
-                res.status(200);
+                res.status(200).end();
                 res.json({"status": "Marker edited succesfully."});
             }
         });
@@ -79,8 +81,7 @@ module.exports = {
 
         if (invalidInput){
             console.log("Creating new marker attempt failed: -" + JSON.stringify(invalidInput));
-            res.status(400);
-            res.json(invalidInput);
+            res.status(400).end();
             return;
         }
 
@@ -91,11 +92,11 @@ module.exports = {
         connection.query(query, function (error, results, fields) {
             if (error) {
                 console.log(`Error creating new marker: ${error.message}`);
-                res.status(500);
+                res.status(500).end();
             } 
             else {
                 console.log('New marker created succesfully.')
-                res.status(200);
+                res.status(200).end();
             }
         });
 
@@ -108,7 +109,7 @@ module.exports = {
         connection.query(query, function (error, results, fields) {
             if (error) {
                 console.log(`Error fetching the map markers from database: ${error.message}`);
-                res.status(500);
+                res.status(500).end();
             } 
             else {
                 // Reform data to geoJSON form
@@ -135,7 +136,7 @@ module.exports = {
                 }
                 catch(any){
                     console.log("Error reforming map markers data.");
-                    res.status(500);
+                    res.status(500).end();
                     return;
                 }
                 
@@ -148,8 +149,9 @@ module.exports = {
 
 
     fetchMarkersInfo: function (req, res) {
+        var id = '';
         try{
-            const id = req.params.id;
+            id = req.params.id;
         }
         catch(any){
             console.log('Error fetching markers info: Bad request');
@@ -186,8 +188,8 @@ function validateInput (input) {
         if (data.title.length < 1 || data.title.length > 25){
             return "Title length should be 1-25 characters";
         }
-        else if (data.description.length < 1 || data.description.length > 100){
-            return "Description length should be 1-100 characters";
+        else if (data.description.length < 1 || data.description.length > 200){
+            return "Description length should be 1-200 characters";
         }
         else {
             return;

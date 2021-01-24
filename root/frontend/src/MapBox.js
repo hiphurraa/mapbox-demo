@@ -94,8 +94,7 @@ export default class MapBox extends React.Component {
                 e.originalEvent.cancelBubble = true;
 
                 this.closeCreatingNewMarker();
-                this.updateMarkers();
-
+                
                 // Center the map to the marker
                 map.flyTo({
                     center: e.features[0].geometry.coordinates
@@ -122,6 +121,8 @@ export default class MapBox extends React.Component {
                     .addTo(map);
 
                 this.setState({selectedMarkerPopup: popup});
+
+                this.updateMarkers();
 
             });
 
@@ -214,14 +215,35 @@ export default class MapBox extends React.Component {
                                                         // TODO
     }
 
-    handleSave () {
+    handleSave (coordinates) {
         this.updateMarkers();
         this.updatePopups();
         this.closeCreatingNewMarker();
+        // Show popup where new marker was created
+        const popupHTML = '<div class="popup"><h3>Merkki luotu!</h3><p></p></div>'
+        var popup = new mapboxgl.Popup({closeButton: false, closeOnClick: true})
+        .setLngLat(coordinates)
+        .setHTML(popupHTML)
+        .addTo(this.state.map);
+        setTimeout(() => {
+            popup.remove();
+            this.updateMarkers();
+        }, 2000); 
     }
 
     handleDelete () {
-        this.updateMarkers();
+        this.setState({isMarkerSelected: false});
+        this.state.selectedMarkerPopup.remove();
+        const coordinates = this.state.selectedMarker.geometry.coordinates;
+        const popupHTML = '<div class="popup"><h3>Merkki poistetaan!</h3><p></p></div>'
+        var popup = new mapboxgl.Popup({closeButton: false, closeOnClick: true})
+            .setLngLat(coordinates)
+            .setHTML(popupHTML)
+            .addTo(this.state.map);
+        setTimeout(() => {
+            popup.remove();
+            this.updateMarkers();
+        }, 2000); 
     }
 
     updatePopups(){
@@ -232,7 +254,11 @@ export default class MapBox extends React.Component {
             this.setState({selectedMarker: marker});
         }
         if (this.state.selectedMarkerPopup){
-            this.state.selectedMarkerPopup.setHTML(`<div class="popup"><h3>Merkkiä muokattu!</h3><p></p></div>`);
+            const popup = this.state.selectedMarkerPopup;
+            popup.setHTML(`<div class="popup"><h3>Merkkiä muokattu!</h3><p></p></div>`);
+            setTimeout(() => {
+                popup.remove();
+            }, 2000); 
         }
         this.setState({isMarkerSelected: false});
     }

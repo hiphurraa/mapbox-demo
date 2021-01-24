@@ -24,7 +24,12 @@ export default class DeleteMarker extends React.Component {
 
         fetch(`http://127.0.0.1:3001/markers/delete/${markerId}`, {method: 'DELETE'})
             .then((response) => {
-                this.props.delete();
+                if (response.status === 200){
+                    this.props.delete();
+                }
+                else {
+                    
+                }
             });
     }
 

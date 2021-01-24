@@ -9,7 +9,9 @@ export default class CreateNewMarker extends React.Component {
         this.saveMarker = this.saveMarker.bind(this);
         this.state = {
             title: '',
-            description: ''
+            description: '',
+            badInput: false,
+            error: ''
         };
     }
 
@@ -20,8 +22,6 @@ export default class CreateNewMarker extends React.Component {
     componentWillUnmount() {
                                                         // TODO
     }
-
-
 
     saveMarker() {
         const newMarkerData = {
@@ -36,17 +36,21 @@ export default class CreateNewMarker extends React.Component {
             body: JSON.stringify({ data: newMarkerData})
         };
         fetch('http://127.0.0.1:3001/markers/create', requestOptions)
-            .then((res) =>{
-                if (!res.ok){
-                    throw Error(res.statusText);
+            .then((response) => {
+                console.log(response.status);
+                if (response.status === 200){
+                    this.setState({badInput: false, error: ''});
+                    this.props.handleSave(this.props.coordinates);
+                    return response.json();
+                }
+                else if (response.status === 400){
+                    this.setState({badInput: true});
                 }
             })
-            .then((res)=>{
-            })
             .catch((error)=>{
+                this.setState({error: 'Odottamaton virhe!'});
             })
 
-        this.props.handleSave();
     }
 
     handleChange(e){
@@ -56,6 +60,8 @@ export default class CreateNewMarker extends React.Component {
     }
 
     render() {
+
+        const { badInput } = this.state;
 
         return(
         <div className="newMarker-container">
@@ -67,13 +73,18 @@ export default class CreateNewMarker extends React.Component {
                     <tbody>
                         <tr>
                             <td>
-                                <label>Otsikko:</label><br/>
+                                <p className='errorMsg'>{this.state.error}</p>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <label>Otsikko: {badInput? '(1-25 merkkiä)' : ''}</label><br/>
                                 <input type="text" name="title" value={this.state.title} onChange={this.handleChange}></input>
                             </td>
                         </tr>
                         <tr>
                         <td>
-                            <label>Kuvaus:</label><br/>
+                            <label>Kuvaus: {badInput? '(1-200 merkkiä)' : ''}</label><br/>
                             <input type="text" name="description" value={this.state.description} onChange={this.handleChange}></input>
                             </td>
                         </tr>
