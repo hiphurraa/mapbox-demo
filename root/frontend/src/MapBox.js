@@ -15,6 +15,7 @@ export default class MapBox extends React.Component {
         this.closeCreatingNewMarker = this.closeCreatingNewMarker.bind(this);
         this.updateMarkers = this.updateMarkers.bind(this);
         this.handleSave = this.handleSave.bind(this);
+        this.handleDelete = this.handleDelete.bind(this);
         this.state = {
             map: null,
             mapContainer: null,
@@ -22,7 +23,8 @@ export default class MapBox extends React.Component {
             newMarkerCoordinates: null,
             newMarkerPopup: null,
             isMarkerSelected: false,
-            selectedMarker: null
+            selectedMarker: null,
+            selectedMarkerPopup: null
         };
     }
 
@@ -114,10 +116,12 @@ export default class MapBox extends React.Component {
 
                 const popupHTML = `<div class="popup"><h3>${title}</h3><p>${description}</p></div>`;
 
-                new mapboxgl.Popup({closeButton: false, closeOnClick: true})
+                var popup = new mapboxgl.Popup({closeButton: false, closeOnClick: true})
                     .setLngLat(coordinates)
                     .setHTML(popupHTML)
                     .addTo(map);
+
+                this.setState({selectedMarkerPopup: popup});
 
             });
 
@@ -212,7 +216,25 @@ export default class MapBox extends React.Component {
 
     handleSave () {
         this.updateMarkers();
+        this.updatePopups();
         this.closeCreatingNewMarker();
+    }
+
+    handleDelete () {
+        this.updateMarkers();
+    }
+
+    updatePopups(){
+        if (this.state.selectedMarker){
+            var marker = this.state.selectedMarker;
+            marker.properties.title = "Merkkiä muokattu!";
+            marker.properties.description = "";
+            this.setState({selectedMarker: marker});
+        }
+        if (this.state.selectedMarkerPopup){
+            this.state.selectedMarkerPopup.setHTML(`<div class="popup"><h3>Merkkiä muokattu!</h3><p></p></div>`);
+        }
+        this.setState({isMarkerSelected: false});
     }
 
     updateMarkers(){
@@ -267,7 +289,7 @@ export default class MapBox extends React.Component {
                 <NavBar></NavBar>
                 <div ref={el => this.mapContainer = el} className="map-container" />
                 {isCreatingNewMarker? <CreateNewMarker cancel={this.closeCreatingNewMarker} coordinates={newMarkerCoordinates} handleSave={this.handleSave}/> : ''}
-                {isMarkerSelected? <ShowMarker marker={selectedMarker}/> : ''}
+                {isMarkerSelected? <ShowMarker marker={selectedMarker} handleSave={this.handleSave} handleDelete={this.handleDelete}/> : ''}
             </div>
         );
     }

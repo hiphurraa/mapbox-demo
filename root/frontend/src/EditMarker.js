@@ -1,15 +1,15 @@
 import React from 'react';
-import './CreateNewMarker.css';
+import './EditMarker.css';
 
-export default class CreateNewMarker extends React.Component {
+export default class EditMarker extends React.Component {
 
     constructor(props) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
         this.saveMarker = this.saveMarker.bind(this);
         this.state = {
-            title: '',
-            description: ''
+            title: this.props.marker.properties.title,
+            description: this.props.marker.properties.description
         };
     }
 
@@ -21,32 +21,29 @@ export default class CreateNewMarker extends React.Component {
                                                         // TODO
     }
 
-
-
     saveMarker() {
-        const newMarkerData = {
+        const editedMarkerData = {
             title: this.state.title,
             description: this.state.description,
-            longitude: this.props.coordinates[0],
-            latitude: this.props.coordinates[1]
+            longitude: this.props.marker.geometry.coordinates[0],
+            latitude: this.props.marker.geometry.coordinates[1]
         };
-        const requestOptions = {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ data: newMarkerData})
-        };
-        fetch('http://127.0.0.1:3001/markers/create', requestOptions)
-            .then((res) =>{
-                if (!res.ok){
-                    throw Error(res.statusText);
-                }
-            })
-            .then((res)=>{
-            })
-            .catch((error)=>{
-            })
 
-        this.props.handleSave();
+        const markerId = this.props.marker.properties.id;
+
+        const requestOptions = {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ data: editedMarkerData})
+        };
+        fetch(`http://127.0.0.1:3001/markers/edit/${markerId}`, requestOptions)
+            .then(response => response.json())
+            .then(data=>{
+                this.props.save();
+            })
+            .catch(error=>{});
+
+    
     }
 
     handleChange(e){
@@ -60,7 +57,7 @@ export default class CreateNewMarker extends React.Component {
         return(
         <div className="newMarker-container">
             <fieldset>
-                <legend>Luo uusi merkki:</legend>
+                <legend>Muokkaa merkkiä:</legend>
                 <table>
                     <thead>
                     </thead>

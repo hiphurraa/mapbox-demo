@@ -39,8 +39,14 @@ app.route("/markers/geojson")
 app.route("/markers/info/:id")
   .get(markerController.fetchMarkersInfo);
 
-  app.route("/markers/create")
+app.route("/markers/create")
   .post(markerController.createNewMarker);
+
+app.route("/markers/edit/:id")
+  .put(markerController.editMarker);
+
+app.route("/markers/delete/:id")
+  .delete(markerController.deleteMarker);
 
 app.listen(port, hostname, () => {
   console.log(`Server running AT http://${hostname}:${port}/`);

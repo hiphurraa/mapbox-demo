@@ -12,6 +12,68 @@ var connection = mysql.createConnection({
 
 module.exports = {
 
+    deleteMarker : function (req, res) {
+        var query = '';
+        try {   
+            const id = req.params.id;
+            query = `DELETE FROM marker WHERE id = ${id};`;
+        }
+        catch(any){
+            console.log('Error deleting marker: bad request')
+            res.status(400);
+            return;
+        }
+
+        connection.query(query, function (error, results, fields) {
+            if (error) {
+                console.log(`Error deleting marker: ${error.message}`);
+                res.status(500);
+            } 
+            else {
+                console.log('Marker deleted succesfully.')
+                res.status(200);
+                res.json({"status": "Marker deleted succesfully."});
+            }
+        });
+    }, // deleteMarker()
+
+
+    editMarker: function (req, res) {
+
+        var query = "";
+
+        try{
+            const {latitude, longitude, title, description} = req.body.data;
+            const id = req.params.id;
+    
+            query =
+                "UPDATE marker" +
+                ` SET latitude = "${latitude}",` +
+                ` longitude = "${longitude}",` +
+                ` title = "${title}",` +
+                ` description = "${description}"` +
+                ` WHERE id = ${id};`;
+        }
+        catch(any){
+            console.log('Error editing marker: bad request');
+            res.status(400);
+            return;
+        }
+
+        connection.query(query, function (error, results, fields) {
+            if (error) {
+                console.log(`Error editing marker: ${error.message}`);
+                res.status(500);
+            } 
+            else {
+                console.log('Marker edited succesfully.')
+                res.status(200);
+                res.json({"status": "Marker edited succesfully."});
+            }
+        });
+    }, // editMarker()
+
+
     createNewMarker: function (req, res) {
         const invalidInput = validateInput(req.body);
 
