@@ -8,7 +8,7 @@ nav{
     display: flex;
     justify-content: space-around;
     align-items: center;
-    min-height: 8vh;
+    height: 20%;
     background-color: #5d4954;
     font-family: sans-serif;
 }
@@ -25,6 +25,7 @@ nav{
     background-color: #5d4954;
     justify-content: space-around;
     width: 20%;
+    padding: .5rem;
 }
 
 .nav-links li {
@@ -46,19 +47,6 @@ nav{
     background-color: #7e6774;
 }
 
-.burger {
-    display: none;
-    cursor: pointer;
-}
-
-.burger div {
-    width: 25px;
-    height: 3px;
-    background-color:rgba(255, 255, 255, 0.712);
-    margin: 5px;
-    transition: all 0.3s ease;
-}
-
 @media screen and (max-width: 1600px) {
     .nav-links {
         width: 30%;
@@ -69,31 +57,4 @@ nav{
     .nav-links {
         width: 40%;
     }
-}
-
-.nav-active {
-    transform: translateX(0%);
-}
-
-@keyframes navLinkFade {
-    from {
-        opacity: 0;
-        transform: translateX(50px);
-    }
-    to {
-        opacity: 1;
-        transform: translateX(0px);
-    }
-}
-
-.toggle .line1 {
-    transform: rotate(-45deg) translate(-5px, 6px)
-}
-
-.toggle .line2 {
-    opacity: 0;
-}
-
-.toggle .line3 {
-    transform: rotate(45deg) translate(-5px, -6px)
 }

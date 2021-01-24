@@ -36,7 +36,7 @@ app.use(express.static("public"));
 app.route("/markers/geojson")
   .get(markerController.fetchMarkersGeoJson);
 
-app.route("/markers/info")
+app.route("/markers/info/:id")
   .get(markerController.fetchMarkersInfo);
 
   app.route("/markers/create")

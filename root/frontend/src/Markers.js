@@ -17,7 +17,7 @@ export default class Markers extends React.Component {
 
   componentDidMount () {
     this.setState({isLoading: true, error: null});
-    fetch("http://127.0.0.1:3001/markers/info")
+    fetch("http://127.0.0.1:3001/markers/info/all")
     .then(res => res.json())
     .then((result) => {
       this.setState({data: result, isLoading: false, error: null});

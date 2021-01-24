@@ -1,13 +1,12 @@
 import React from 'react';
 import './CreateNewMarker.css';
-import marker from './marker_.png';
 
 export default class CreateNewMarker extends React.Component {
 
     constructor(props) {
         super(props);
         this.handleChange = this.handleChange.bind(this);
-        this.sendDataToServer = this.sendDataToServer.bind(this);
+        this.saveMarker = this.saveMarker.bind(this);
         this.state = {
             title: '',
             description: ''
@@ -22,7 +21,9 @@ export default class CreateNewMarker extends React.Component {
                                                         // TODO
     }
 
-    sendDataToServer() {
+
+
+    saveMarker() {
         const newMarkerData = {
             title: this.state.title,
             description: this.state.description,
@@ -41,11 +42,12 @@ export default class CreateNewMarker extends React.Component {
                 }
             })
             .then((res)=>{
-                // Save Marker and inform the user of success
             })
             .catch((error)=>{
                 // Delete marker and inform the user of failure
             })
+
+        this.props.handleSave();
     }
 
     handleChange(e){
@@ -78,7 +80,7 @@ export default class CreateNewMarker extends React.Component {
                         </tr>
                         <tr>
                             <td>
-                                <button className="save-btn" onClick={this.sendDataToServer}>Tallenna</button>
+                                <button className="save-btn" onClick={this.saveMarker}>Tallenna</button>
                                 <button className="cancel-btn" onClick={(e) =>{this.props.cancel()}}>Peruuta</button>
                             </td>
                         </tr>

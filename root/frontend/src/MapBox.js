@@ -4,6 +4,7 @@ import NavBar from './NavBar';
 import markerImg from './marker_.png';
 import './MapBox.css';
 import CreateNewMarker from './CreateNewMarker';
+import ShowMarker from './ShowMarker';
 
 mapboxgl.accessToken = 'pk.eyJ1IjoiaGlwaHVycmFhIiwiYSI6ImNrazVxd24xNjA4NGQyb29hY2MzcWtyNmkifQ.-9gTy_Q35okDPCEmQlWm9A';
 
@@ -11,14 +12,17 @@ export default class MapBox extends React.Component {
 
     constructor(props) {
         super(props);
-        this.cancelCreatingNewMarker = this.cancelCreatingNewMarker.bind(this);
-        this.markerRef = React.createRef();
+        this.closeCreatingNewMarker = this.closeCreatingNewMarker.bind(this);
+        this.updateMarkers = this.updateMarkers.bind(this);
+        this.handleSave = this.handleSave.bind(this);
         this.state = {
             map: null,
             mapContainer: null,
             isCreatingNewMarker: false,
             newMarkerCoordinates: null,
-            newMarkerPopup: null
+            newMarkerPopup: null,
+            isMarkerSelected: false,
+            selectedMarker: null
         };
     }
 
@@ -82,10 +86,13 @@ export default class MapBox extends React.Component {
                 );
             });
 
-        // Click on a marker
+        // Click on a existing marker
         map.on('click', 'points', (e) => {
                 // Cancel the click event occurring on the map layer
                 e.originalEvent.cancelBubble = true;
+
+                this.closeCreatingNewMarker();
+                this.updateMarkers();
 
                 // Center the map to the marker
                 map.flyTo({
@@ -96,6 +103,7 @@ export default class MapBox extends React.Component {
                 var coordinates = e.features[0].geometry.coordinates.slice();
                 var title = e.features[0].properties.title;
                 var description = e.features[0].properties.description;
+                this.setState({isMarkerSelected: true, selectedMarker: e.features[0]});
 
                 // Ensure that if the map is zoomed out such that multiple
                 // copies of the feature are visible, the popup appears
@@ -106,7 +114,7 @@ export default class MapBox extends React.Component {
 
                 const popupHTML = `<div class="popup"><h3>${title}</h3><p>${description}</p></div>`;
 
-                new mapboxgl.Popup()
+                new mapboxgl.Popup({closeButton: false, closeOnClick: true})
                     .setLngLat(coordinates)
                     .setHTML(popupHTML)
                     .addTo(map);
@@ -115,55 +123,60 @@ export default class MapBox extends React.Component {
 
         // Click on the map
         map.on('click', (e) => {
-                // If clicked on a existing marker, don't do anything
+                // If clicked on a existing marker -> cancel this event
                 if (e.originalEvent.cancelBubble) {
                     return;
                 }
+                this.updateMarkers();
 
-                var coordinates = [e.lngLat.lng, e.lngLat.lat]
-                this.setState({newMarkerCoordinates: coordinates, isCreatingNewMarker: true});
-
-                var newMarkerGeoJson = {
-                    type: "FeatureCollection",
-                    features: [{
-                        'Type': 'Feature',
-                        'geometry': {
-                            'type': 'Point',
-                            'coordinates': coordinates
-                        }
-                    }]
-                };
-
-                if (map.getSource('newPoint')){
-                    map.getSource('newPoint').setData(newMarkerGeoJson);
+                if (this.state.isMarkerSelected){
+                    this.setState({isMarkerSelected: false});
                 }
-                
-                if (this.state.newMarkerPopup){
-                    this.state.newMarkerPopup.remove();
+                else {
+
+                    var coordinates = [e.lngLat.lng, e.lngLat.lat]
+                    this.setState({newMarkerCoordinates: coordinates, isCreatingNewMarker: true});
+                    var newMarkerGeoJson = {
+                        type: "FeatureCollection",
+                        features: [{
+                            'Type': 'Feature',
+                            'geometry': {
+                                'type': 'Point',
+                                'coordinates': coordinates
+                            }
+                        }]
+                    };
+    
+                    if (map.getSource('newPoint')){
+                        map.getSource('newPoint').setData(newMarkerGeoJson);
+                    }
+                    
+                    if (this.state.newMarkerPopup){
+                        this.state.newMarkerPopup.remove();
+                    }
+                    
+                    // Ensure that if the map is zoomed out such that multiple
+                    // copies of the feature are visible, the popup appears
+                    // over the copy being pointed to.
+                    while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                        coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+                    }
+    
+                    const popupHTML = `<div class="newMarker-popup">Luodaan uutta merkkiä!</div>`;
+    
+                    var popup = new mapboxgl.Popup({closeButton: false, closeOnClick: false})
+                        .setLngLat(coordinates)
+                        .setHTML(popupHTML)
+                        .addTo(map);
+    
+                    this.setState({newMarkerPopup: popup})
                 }
-                
-                // Ensure that if the map is zoomed out such that multiple
-                // copies of the feature are visible, the popup appears
-                // over the copy being pointed to.
-                while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                    coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-                }
-
-                const popupHTML = `<div class="newMarker-popup">Luodaan uutta merkkiä!</div>`;
-
-                var popup = new mapboxgl.Popup({closeButton: false, closeOnClick: false})
-                    .setLngLat(coordinates)
-                    .setHTML(popupHTML)
-                    .addTo(map);
-
-                this.setState({newMarkerPopup: popup})
 
             });
 
         var popup = new mapboxgl.Popup({closeButton: false, closeOnClick: false})
 
         map.on('mouseenter', 'points', (e) => {
-
                 map.getCanvas().style.cursor = 'pointer';
 
                 // Get the info of the marker
@@ -184,7 +197,7 @@ export default class MapBox extends React.Component {
 
                 const popupHTML = `<div class="popup"><h3>${title}</h3><p>${description}</p></div>`;
                 popup.setLngLat(coordinates).setHTML(popupHTML).addTo(map);
-            });
+        });
 
         map.on('mouseleave', 'points', () => {
                 map.getCanvas().style.cursor = '';
@@ -197,7 +210,36 @@ export default class MapBox extends React.Component {
                                                         // TODO
     }
 
-    cancelCreatingNewMarker () {
+    handleSave () {
+        this.updateMarkers();
+        this.closeCreatingNewMarker();
+    }
+
+    updateMarkers(){
+        if (this.state.map){
+            var map = this.state.map;
+        }
+        else{
+            console.log("Virhe!");
+            return;
+        }
+        fetch('http://127.0.0.1:3001/markers/geojson')
+        .then(res => res.json())
+        .then((result) => {
+            if (map.getSource('point')){
+                map.getSource('point').setData(result);
+            }
+            else {
+                // Failed updating markes
+            }
+        }
+        )
+        .catch((error) => {
+            // Error fetching data from database
+        });
+    }
+
+    closeCreatingNewMarker () {
         if (this.state.isCreatingNewMarker){
             this.setState({isCreatingNewMarker: false});
         }
@@ -215,29 +257,19 @@ export default class MapBox extends React.Component {
             }
         }
 
-    } // cancelCreatingNewMarker()
+    } // closeCreatingNewMarker()
 
     render() {
-        const {isCreatingNewMarker, newMarkerCoordinates} = this.state;
+        const {isCreatingNewMarker, newMarkerCoordinates, isMarkerSelected, selectedMarker} = this.state;
 
-        if(isCreatingNewMarker){
-            return (
-                <div>
-                    <NavBar></NavBar>
-                    <div ref={el => this.mapContainer = el} className="map-container" />
-                    <CreateNewMarker cancel={this.cancelCreatingNewMarker} coordinates={newMarkerCoordinates}/>
-                </div>
-              );
-        }
-        else{
-            return (
-                <div>
-                    <NavBar></NavBar>
-                    <div ref={el => this.mapContainer = el} className="map-container" />
-                </div>
-            );
-        }
-
+        return (
+            <div>
+                <NavBar></NavBar>
+                <div ref={el => this.mapContainer = el} className="map-container" />
+                {isCreatingNewMarker? <CreateNewMarker cancel={this.closeCreatingNewMarker} coordinates={newMarkerCoordinates} handleSave={this.handleSave}/> : ''}
+                {isMarkerSelected? <ShowMarker marker={selectedMarker}/> : ''}
+            </div>
+        );
     }
 
 }

@@ -24,7 +24,6 @@ module.exports = {
 
         const { latitude, longitude, title, description } = req.body.data;
 
-        console.log(req.body);
         var query = 'INSERT INTO mapmarker.marker (latitude, longitude, title, description) '+ 
                     `VALUES ("${latitude}", "${longitude}", "${title}", "${description}");`
         connection.query(query, function (error, results, fields) {
@@ -38,7 +37,8 @@ module.exports = {
             }
         });
 
-    },
+    }, // createNewMarker()
+
 
     // Fetch map markers from database and respond with geoJSON data
     fetchMarkersGeoJson: function (req, res) {
@@ -84,36 +84,38 @@ module.exports = {
 
     },//fetchMarkersGeoJson()
 
+
     fetchMarkersInfo: function (req, res) {
-        var query = 'SELECT * from marker;';
+        try{
+            const id = req.params.id;
+        }
+        catch(any){
+            console.log('Error fetching markers info: Bad request');
+            res.status(400);
+            return;
+        }
+        var query = '';
+        if (id == 'all'){
+            query = 'SELECT * from marker;';
+        }
+        else {
+            query = `SELECT * from marker WHERE id = ${id}`;
+        }
         connection.query(query, function (error, results, fields) {
             if (error) {
                 console.log(`Error fetching the map markers from database: ${error.message}`);
                 res.status(500);
             } 
             else {
-                // Reform data to wanted form
-                try{
-                    if (false){
-                        var markersData = result.map(function (item){
-                            return {
-                            };
-                        }) 
-                    }
-                }
-                catch(any){
-                    console.log("Error reforming map markers data.");
-                    res.status(500);
-                    return;
-                }
-                
                 res.status(200);
                 res.json(results);
             }
         });
-    }
+    } // fetchMarkersInfo()
+
 
 }; // module.exports
+
 
 function validateInput (input) {
     try{
