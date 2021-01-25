@@ -14,14 +14,6 @@ export default class EditMarker extends React.Component {
         };
     }
 
-    componentDidMount() {
-
-    } // componentDidMount()
-
-    componentWillUnmount() {
-                                                        // TODO
-    }
-
     saveMarker() {
         const editedMarkerData = {
             title: this.state.title,
@@ -42,7 +34,7 @@ export default class EditMarker extends React.Component {
             .then(data=>{
                 this.props.handleSave();
             })
-            .catch(error=>{});
+            .catch(error=>{}); // TODO: fix this shit
     }
 
     handleChange(e){

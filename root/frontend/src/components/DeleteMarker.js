@@ -11,14 +11,6 @@ export default class DeleteMarker extends React.Component {
         };
     }
 
-    componentDidMount() {
-
-    } // componentDidMount()
-
-    componentWillUnmount() {
-                                                        // TODO
-    }
-
     deleteMarker = () => {
         this.setState({isLoading: true})
 
@@ -39,7 +31,6 @@ export default class DeleteMarker extends React.Component {
     cancel () {
         this.props.handleCancel();
     }
-
 
     render() {
 

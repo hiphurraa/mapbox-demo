@@ -29,10 +29,6 @@ export default class MarkersList extends React.Component {
     })
   }
 
-  showMarkerOnMap() {
-    alert('toimii');
-  }
-
   MyTable(props){
       return(
         <table>
@@ -46,8 +42,8 @@ export default class MarkersList extends React.Component {
             {props.data.map((item) => {
               return(
                 <tr key={item.id}>
-                  <td>{item.title}</td>
-                  <td>{item.description}</td>
+                  <td className='title'>{item.title}</td>
+                  <td className='description'>{item.description}</td>
                 </tr>
               );
             })}
@@ -67,7 +63,7 @@ export default class MarkersList extends React.Component {
               <fieldset>
                 <legend>Merkinnät:</legend>
                 {(!error && !isLoading && isData)? <this.MyTable data={data}/> : ''}
-                {(!isData)? <h3>Ei merkkejä!</h3> : ''}
+                {(!error && !isLoading && !isData)? <h3>Ei merkkejä!</h3> : ''}
                 {error? <h3>Virhe haettaessa dataa!</h3> : ''}
                 {isLoading? <h3>Ladataan...</h3> : ''}
               </fieldset>

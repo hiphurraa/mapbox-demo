@@ -16,14 +16,6 @@ export default class CreateNewMarker extends React.Component {
         };
     }
 
-    componentDidMount() {
-
-    } // componentDidMount()
-
-    componentWillUnmount() {
-                                                        // TODO
-    }
-
     saveMarker() {
         this.setState({isLoading: true});
         const newMarkerData = {

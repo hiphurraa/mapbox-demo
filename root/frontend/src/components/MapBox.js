@@ -199,10 +199,6 @@ export default class MapBox extends React.Component {
 
     } // componentDidMount()
 
-    componentWillUnmount(){
-                                                        // TODO
-    }
-
     handleSaveMarker (coordinates) {
         this.updateMap();
         this.updatePopups();
