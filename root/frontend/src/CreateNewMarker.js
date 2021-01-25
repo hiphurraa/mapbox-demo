@@ -60,7 +60,6 @@ export default class CreateNewMarker extends React.Component {
                 }
             })
             .catch((error)=>{
-                console.log(error);
                 this.setState({error: 'Odottamaton virhe!', isLoading: false});
             })
 
@@ -86,9 +85,9 @@ export default class CreateNewMarker extends React.Component {
                     <tbody>
                         <tr>
                             <td>
-                                <p className='errorMsg'>{error? error : ''}</p>
-                                <p className='badInputMsg'>{badInput? badInput : ''}</p>
-                                <p className='loadingMsg'>{isLoading? 'Tallennetaan...' : ''}</p>
+                                <p className='error-msg'>{error? error : ''}</p>
+                                <p className='badInput-msg'>{badInput? badInput : ''}</p>
+                                <p className='loading-msg'>{isLoading? 'Tallennetaan...' : ''}</p>
                             </td>
                         </tr>
                         <tr>

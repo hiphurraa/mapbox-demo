@@ -1,45 +1,57 @@
 .deleteMarker-container {
-    display: inline-block;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    margin: 50px;
-    background-color: #6b5959;
-    color: #ffffff;
-    z-index: 1 !important;
-    padding: .5rem;
-    font-weight: bold;
-    border-radius: .5rem;;
+  display: inline-block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  margin: 50px;
+  background-color: #bdd6b9;
+  z-index: 1 !important;
+  padding: .5rem .6rem;
+  font-weight: bold;
+  border-radius: .5rem;
 }
 
-fieldset{
+.deleteMarker-container button {
+  margin: 0.5rem 0.5rem 0 0;
+}
+
+.deleteMarker-container fieldset{
   padding: 1rem;
+  color :rgb(23, 77, 23);
 }
 
-.delete-warning {
+.deleteMarker-container .delete-warning {
     color: #aa0c0c;
 }
 
-.delete-btn {
-    color: #dddddd;
-    background-color: #f44336;
+.deleteMarker-container .delete-btn {
+  color: #dde9de;
+  background-color: #ac322c;
     border: solid black 1px;
     border-radius: .4rem;
     padding: .25rem;
     font-weight: bold;
 }
 
-.cancel-btn {
-    color: #dddddd;
-    background-color: #555555;
-    border: solid black 1px;
-    border-radius: .4rem;
-    padding: .25rem;
-    font-weight: bold;
-  }
+.deleteMarker-container .delete-btn:hover {
+  background-color: rgb(219, 43, 34);
+}
 
-.marker-title {
-    color: rgb(14, 0, 141);
+.deleteMarker-container .cancel-btn {
+  background-color: rgb(75, 82, 75);
+  border: solid black 1px;
+  border-radius: .3rem;
+  padding: .25rem;
+  color: #dde9de;
+}
+
+.deleteMarker-container .cancel-btn:hover {
+  background-color: rgb(76, 92, 76);
+}
+
+
+  .deleteMarker-container .marker-title {
+    color :rgb(46, 56, 41);
   }
 
 @media screen and (max-width: 1024px) {

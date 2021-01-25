@@ -4,44 +4,57 @@
     bottom: 0;
     left: 0;
     margin: 50px;
-    background-color: #6b5959;
-    color: #ffffff;
+    background-color: #bdd6b9;
     z-index: 1 !important;
-    padding: .5rem;
+    padding: .5rem .6rem;
     font-weight: bold;
-    border-radius: .5rem;;
+    border-radius: .5rem;
 }
 
-fieldset{
+.newMarker-container fieldset{
   padding: 1rem;
+  color :rgb(23, 77, 23);
 }
 
-button {
+.newMarker-container button {
   margin: 0.5rem 0.5rem 0 0;
 }
 
-.save-btn {
-  background-color: rgb(13, 28, 114);
-  border:none;
-  border-radius: .3rem;
+.newMarker-container .save-btn {
+  color: #dde9de;
+  background-color:#008CBA;
+  border: solid black 1px;
+  border-radius: .4rem;
   padding: .3rem;
-  color:rgb(224, 209, 209);
+  font-weight: bold;
 }
 
-.save-btn:hover {
-  background-color: rgb(12, 32, 150);
+.newMarker-container .save-btn:hover {
+  background-color:#09ade4;
 }
 
-.cancel-btn {
-  background-color: rgb(63, 52, 52);
-  border:none;
+.newMarker-container .cancel-btn {
+  background-color: rgb(75, 82, 75);
+  border: solid black 1px;
   border-radius: .3rem;
-  padding: .3rem;
-  color: rgb(226, 210, 210);
+  padding: .25rem;
+  color: #dde9de;
 }
 
-.cancel-btn:hover{
-  background-color: rgb(71, 42, 42);
+.newMarker-container .cancel-btn:hover{
+  background-color: rgb(76, 92, 76);
+}
+
+.badInput-msg {
+  color: #f44336;
+}
+
+.error-msg {
+  color: #f44336;
+}
+
+.loading-msg {
+  color: #4CAF50;
 }
 
 @media screen and (max-width: 1024px) {

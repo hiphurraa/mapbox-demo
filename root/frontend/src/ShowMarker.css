@@ -1,64 +1,69 @@
 .showMarker-container {
-    display: inline-block;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    margin: 50px;
-    background-color: #6b5959;
-    z-index: 1 !important;
-    padding: .5rem;
-    font-weight: bold;
-    border-radius: .5rem;;
-}
-
-.marker-title {
-  color: rgb(14, 0, 141);
-}
-
-.marker-description{
-  color: #ffffff;
-}
-
-.edit-btn {
-  color: #dddddd;
-  background-color: #008CBA;
-  border: solid black 1px;
-  border-radius: .4rem;
-  padding: .25rem;
+  display: inline-block;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  margin: 50px;
+  background-color: #bdd6b9;
+  z-index: 1 !important;
+  padding: .5rem .6rem;
   font-weight: bold;
+  border-radius: .5rem;
+  max-width: 40%;
 }
 
-.edit-btn:hover {
+.showMarker-container .marker-title {
+  color :rgb(10, 97, 10);
+}
+
+.showMarker-container .marker-description{
+  color :rgb(46, 56, 41);
+}
+
+.showMarker-container button {
+  margin: 0.5rem 0.5rem 0 0;
+}
+
+.showMarker-container .edit-btn {
   background-color:#008CBA;
-}
-
-.delete-btn {
-  color: #dddddd;
-  background-color: #f44336;
   border: solid black 1px;
-  border-radius: .4rem;
+  border-radius: .3rem;
   padding: .25rem;
-  font-weight: bold;
+  color: #dde9de;
 }
 
-.delete-btn:hover {
-  background-color: #f44336;
+.showMarker-container .edit-btn:hover {
+  background-color:#09ade4;
 }
 
-fieldset{
+.showMarker-container .delete-btn {
+  color: #dde9de;
+  background-color: #ac322c;
+  border: solid black 1px;
+  border-radius: .3rem;
+  padding: .25rem;
+}
+
+.showMarker-container .delete-btn:hover {
+  background-color: rgb(219, 43, 34);
+}
+
+.showMarker-container fieldset{
   padding: 1rem;
-  color: #ffffff;
+  color :rgb(23, 77, 23);
 }
 
 @media screen and (max-width: 1024px) {
   .showMarker-container {
     margin: 25px;
+    max-width: 60%;
   }
 }
 
 @media screen and (max-width: 768px) {
   .showMarker-container {
-    margin: 0px;
+    margin: 5px;
+    max-width: 100%;
   }
 }
 

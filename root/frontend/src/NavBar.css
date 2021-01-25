@@ -9,7 +9,7 @@ nav{
     justify-content: space-around;
     align-items: center;
     height: 20%;
-    background-color: #5d4954;
+    background-color: rgb(23, 77, 23);
     font-family: sans-serif;
 }
 
@@ -22,10 +22,11 @@ nav{
 
 .nav-links {
     display: flex;
-    background-color: #5d4954;
+    background-color: rgb(23, 77, 23);
     justify-content: space-around;
     width: 20%;
     padding: .5rem;
+    margin: .5rem;
 }
 
 .nav-links li {
@@ -36,7 +37,7 @@ nav{
     color:rgba(255, 255, 255, 0.712);
     padding: .5rem;
     border-radius: .5rem;
-    background-color: #5d4954;
+    background-color: rgb(23, 77, 23);
     text-decoration: none;
     letter-spacing: 3px;
     font-weight: bold;
@@ -44,7 +45,7 @@ nav{
 }
 
 .nav-links a:hover {
-    background-color: #7e6774;
+    background-color: rgb(29, 97, 29);
 }
 
 @media screen and (max-width: 1600px) {

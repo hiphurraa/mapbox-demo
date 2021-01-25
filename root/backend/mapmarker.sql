@@ -18,3 +18,6 @@ VALUES ("62.896005", "27.681000", "Hurja Solutions Oy", "Hurjan hyvä ohjelmisto
 
 INSERT INTO mapmarker.marker (latitude, longitude, title, description)
 VALUES ("62.895379", "27.657227", "Tomi Heikkala", "Hurjan hyvä työntekijä!");
+
+INSERT INTO mapmarker.marker (latitude, longitude, title, description)
+VALUES ("62.878554", "27.710746", "Esimerkkimerkki", "Tässäpä tämmönen esimerkkimerkki jossa on oikein pitkä kuvaus, jotta nähdään, miten sivusto händlää tämmöiset vähän pidemmät kuvaukset. Tietokannassa on kuvaukselle rajoitus 200 merkkiä.");

@@ -1,16 +1,12 @@
 .popup h3{
-  color: rgb(5, 48, 114);
-}
-
-.newMarker-popup {
-  text-align: center;
+  color :rgb(23, 77, 23);
 }
 
 .mapboxgl-popup-close-button {
   background-color: rgba(255, 0, 0, 0.596);
   padding: .2rem;
   margin: .1rem;
-  border-radius: .5rem;
+  border-radius: .3rem;
 }
 
 .mapboxgl-popup-close-button:hover{
@@ -19,8 +15,9 @@
 
 .mapboxgl-popup-content {
   font: 400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
-  padding: 0;
+  padding: .5rem;
   width: 180px;
+  text-align: center;
 }
 
 .mapboxgl-popup-content-wrapper {

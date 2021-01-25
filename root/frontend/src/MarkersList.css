@@ -11,9 +11,17 @@
 .markersList-container td {
   padding: .3rem;
   border: solid black 1px;
-  background-color: whitesmoke;
+  background-color: rgb(209, 209, 209);
   color: black;
+  border-radius: .3rem;
 }
+
+.markersList-container th {
+  border: solid black 1px;
+  background-color: rgb(104, 104, 104);
+  min-width: 10rem;
+}
+
 
 @media screen and (max-width: 1024px) {
   .markersList-container {
