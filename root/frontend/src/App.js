@@ -1,12 +1,12 @@
 import { Route, Switch } from 'react-router-dom';
-import MapBox from './MapBox';
-import MarkersList from './MarkersList';
+import MapBox from './components/MapBox';
+import MarkersList from './components/MarkersList';
 
 function App() {
   return (
     <main>
         <Switch>
-            <Route path="/map" component={MapBox} exact />
+            <Route path="/" component={MapBox} exact />
             <Route path="/markers" component={MarkersList} />
         </Switch>
     </main>

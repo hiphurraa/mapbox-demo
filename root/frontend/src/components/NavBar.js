@@ -20,17 +20,12 @@ export default class Navbar extends React.Component {
                 </div>
                 <ul className="nav-links">
                     <li>
-                        <Link to="/map">Kartta</Link>
+                        <Link to="/">Kartta</Link>
                     </li>
                     <li>
                         <Link to="/markers">Merkinnät</Link>
                     </li>
                 </ul>
-                <div className="burger">
-                    <div className="line1"></div>
-                    <div className="line2"></div>
-                    <div className="line3"></div>
-                </div>
             </nav>
         );
     }

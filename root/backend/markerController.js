@@ -1,13 +1,13 @@
 "use strict";
 
-var mysql = require("mysql");
-
+var mysql = require('mysql');
+var {port, user, password} = require('../mysql_settings.json');
 var connection = mysql.createConnection({
   host: "localhost",
-  port: 3306,
-  user: "root",
-  password: "ruutti",
   database: "mapmarker",
+  port: port,
+  user: user,
+  password: password
 });
 
 module.exports = {
@@ -40,6 +40,12 @@ module.exports = {
 
 
     editMarker: function (req, res) {
+        // const badInput = validateInput(req.body);
+        // if (badInput){
+        //     console.log("Editing marker attempt failed: -" + JSON.stringify(badInput));
+        //     res.status(400).json({'badInput': badInput, 'status': 400});
+        //     return;
+        // }
 
         var query = "";
 
@@ -77,7 +83,6 @@ module.exports = {
 
     createNewMarker: function (req, res) {
         const badInput = validateInput(req.body);
-
         if (badInput){
             console.log("Creating new marker attempt failed: -" + JSON.stringify(badInput));
             res.status(400).json({'badInput': badInput, 'status': 400});

@@ -1,0 +1,50 @@
+.markersList-container {
+  margin: 6rem auto;
+  width: 80%;
+}
+
+.markersList-container fieldset {
+  padding: 1rem;
+  color: rgb(23, 77, 23);
+  font-weight: bold;
+}
+
+.markersList-container td {
+  padding: .4rem;
+  border: solid black 1px;
+  background-color: rgb(218, 228, 212);
+  color: black;
+  border-radius: .3rem;
+}
+
+.markersList-container th {
+  border: solid rgb(40, 68, 44) 2px;
+  background-color: rgb(51, 105, 57);
+  min-width: 10rem;
+  color: #dde9de;
+  padding: .35rem;
+  border-radius: .2rem;
+}
+
+.markersList-container .description {
+  width: 80%;
+  padding: .5rem 1rem;
+}
+
+.markersList-container .title {
+  text-align: center;
+}
+
+@media screen and (max-width: 1024px) {
+  .markersList-container {
+    margin: 5rem auto;
+    width: 90%;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .markersList-container {
+    margin: 4rem auto;
+    width: 95%;
+  }
+}

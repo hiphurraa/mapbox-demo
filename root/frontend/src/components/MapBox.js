@@ -1,7 +1,7 @@
 import React from 'react';
 import mapboxgl from 'mapbox-gl';
 import NavBar from './NavBar';
-import markerImg from './marker_.png';
+import markerImg from '../images/marker.png';
 import './MapBox.css';
 import CreateNewMarker from './CreateNewMarker';
 import ShowMarker from './ShowMarker';
