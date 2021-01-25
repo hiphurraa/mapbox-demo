@@ -13,9 +13,9 @@ export default class MapBox extends React.Component {
     constructor(props) {
         super(props);
         this.closeCreatingNewMarker = this.closeCreatingNewMarker.bind(this);
-        this.updateMarkers = this.updateMarkers.bind(this);
-        this.handleSave = this.handleSave.bind(this);
-        this.handleDelete = this.handleDelete.bind(this);
+        this.updateMap = this.updateMap.bind(this);
+        this.handleSaveMarker = this.handleSaveMarker.bind(this);
+        this.handleDeleteMarker = this.handleDeleteMarker.bind(this);
         this.state = {
             map: null,
             mapContainer: null,
@@ -42,10 +42,9 @@ export default class MapBox extends React.Component {
         map.on('load', () => {
                 map.loadImage(markerImg,
                     (error, image) => {
-                        if (error)
-                            throw error;
-                        map.addImage('marker', image);
+                        if (error) throw error;
 
+                        map.addImage('marker', image);
                         fetch('http://127.0.0.1:3001/markers/geojson')
                         .then(res => res.json())
                         .then((result) => {
@@ -53,7 +52,6 @@ export default class MapBox extends React.Component {
                                 type: 'geojson',
                                 data: result
                             });
-
                             map.addLayer({
                                 'id': 'points',
                                 'type': 'symbol',
@@ -63,13 +61,11 @@ export default class MapBox extends React.Component {
                                     'icon-size': 0.8
                                 }
                             });
-
                             map.addSource('newPoint', {
                                 type: 'geojson',
                                 data: {type: "FeatureCollection", features: []
                                 }
                             });
-            
                             map.addLayer({
                                 'id': 'newPoints',
                                 'type': 'symbol',
@@ -82,7 +78,7 @@ export default class MapBox extends React.Component {
                         }
                         )
                         .catch((error) => {
-                            // Handle errors
+                            // Failed to fetch markers from database. Inform the user.
                         });
                     }
                 );
@@ -90,20 +86,12 @@ export default class MapBox extends React.Component {
 
         // Click on a existing marker
         map.on('click', 'points', (e) => {
-                // Cancel the click event occurring on the map layer
-                e.originalEvent.cancelBubble = true;
+                const coordinates = e.features[0].geometry.coordinates.slice();
+                const { title, description } = e.features[0].properties;
 
+                e.originalEvent.cancelBubble = true; // Cancel the click event occurring on the map layer
                 this.closeCreatingNewMarker();
-                
-                // Center the map to the marker
-                map.flyTo({
-                    center: e.features[0].geometry.coordinates
-                });
-
-                // Get the info of the marker
-                var coordinates = e.features[0].geometry.coordinates.slice();
-                var title = e.features[0].properties.title;
-                var description = e.features[0].properties.description;
+                map.flyTo({ center: e.features[0].geometry.coordinates});
                 this.setState({isMarkerSelected: true, selectedMarker: e.features[0]});
 
                 // Ensure that if the map is zoomed out such that multiple
@@ -122,7 +110,7 @@ export default class MapBox extends React.Component {
 
                 this.setState({selectedMarkerPopup: popup});
 
-                this.updateMarkers();
+                this.updateMap();
 
             });
 
@@ -132,7 +120,7 @@ export default class MapBox extends React.Component {
                 if (e.originalEvent.cancelBubble) {
                     return;
                 }
-                this.updateMarkers();
+                this.updateMap();
 
                 if (this.state.isMarkerSelected){
                     this.setState({isMarkerSelected: false});
@@ -215,8 +203,8 @@ export default class MapBox extends React.Component {
                                                         // TODO
     }
 
-    handleSave (coordinates) {
-        this.updateMarkers();
+    handleSaveMarker (coordinates) {
+        this.updateMap();
         this.updatePopups();
         this.closeCreatingNewMarker();
         // Show popup where new marker was created
@@ -227,11 +215,12 @@ export default class MapBox extends React.Component {
         .addTo(this.state.map);
         setTimeout(() => {
             popup.remove();
-            this.updateMarkers();
+            this.updateMap();
         }, 2000); 
     }
 
-    handleDelete () {
+    // Inform the user that marker has been deleted succesfully
+    handleDeleteMarker () {
         this.setState({isMarkerSelected: false});
         this.state.selectedMarkerPopup.remove();
         const coordinates = this.state.selectedMarker.geometry.coordinates;
@@ -242,9 +231,10 @@ export default class MapBox extends React.Component {
             .addTo(this.state.map);
         setTimeout(() => {
             popup.remove();
-            this.updateMarkers();
+            this.updateMap();
         }, 2000); 
     }
+
 
     updatePopups(){
         if (this.state.selectedMarker){
@@ -263,12 +253,11 @@ export default class MapBox extends React.Component {
         this.setState({isMarkerSelected: false});
     }
 
-    updateMarkers(){
+    updateMap(){
         if (this.state.map){
             var map = this.state.map;
         }
         else{
-            console.log("Virhe!");
             return;
         }
         fetch('http://127.0.0.1:3001/markers/geojson')
@@ -314,8 +303,8 @@ export default class MapBox extends React.Component {
             <div>
                 <NavBar></NavBar>
                 <div ref={el => this.mapContainer = el} className="map-container" />
-                {isCreatingNewMarker? <CreateNewMarker cancel={this.closeCreatingNewMarker} coordinates={newMarkerCoordinates} handleSave={this.handleSave}/> : ''}
-                {isMarkerSelected? <ShowMarker marker={selectedMarker} handleSave={this.handleSave} handleDelete={this.handleDelete}/> : ''}
+                {isCreatingNewMarker? <CreateNewMarker cancel={this.closeCreatingNewMarker} coordinates={newMarkerCoordinates} handleSave={this.handleSaveMarker}/> : ''}
+                {isMarkerSelected? <ShowMarker marker={selectedMarker} handleSave={this.handleSaveMarker} handleDelete={this.handleDeleteMarker}/> : ''}
             </div>
         );
     }

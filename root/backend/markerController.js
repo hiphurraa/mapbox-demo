@@ -21,22 +21,21 @@ module.exports = {
         }
         catch(any){
             console.log('Error deleting marker: bad request')
-            res.status(400).end();
+            res.status(400);
             return;
         }
-
-        console.log(query);
 
         connection.query(query, function (error, results, fields) {
             if (error) {
                 console.log(`Error deleting marker: ${error.message}`);
-                res.status(500).end();
+                res.status(500);
             } 
             else {
                 console.log('Marker deleted succesfully.')
-                res.status(200).end();
+                res.status(200).json('Marker deleted succesfully.');
             }
         });
+
     }, // deleteMarker()
 
 
@@ -55,48 +54,49 @@ module.exports = {
                 ` title = "${title}",` +
                 ` description = "${description}"` +
                 ` WHERE id = ${id};`;
+
+            connection.query(query, function (error, results, fields) {
+                if (error) {
+                    console.log(`Error editing marker: ${error.message}`);
+                    res.status(500);
+                } 
+                else {
+                    console.log('Marker edited succesfully.')
+                    res.status(200).json('Marker edited succesfully.');
+                }
+            });
         }
         catch(any){
             console.log('Error editing marker: bad request');
-            res.status(400).end();
+            res.status(400);
             return;
         }
 
-        connection.query(query, function (error, results, fields) {
-            if (error) {
-                console.log(`Error editing marker: ${error.message}`);
-                res.status(500).end();
-            } 
-            else {
-                console.log('Marker edited succesfully.')
-                res.status(200).end();
-                res.json({"status": "Marker edited succesfully."});
-            }
-        });
     }, // editMarker()
 
 
     createNewMarker: function (req, res) {
-        const invalidInput = validateInput(req.body);
+        const badInput = validateInput(req.body);
 
-        if (invalidInput){
-            console.log("Creating new marker attempt failed: -" + JSON.stringify(invalidInput));
-            res.status(400).end();
+        if (badInput){
+            console.log("Creating new marker attempt failed: -" + JSON.stringify(badInput));
+            res.status(400).json({'badInput': badInput, 'status': 400});
             return;
         }
 
         const { latitude, longitude, title, description } = req.body.data;
 
         var query = 'INSERT INTO mapmarker.marker (latitude, longitude, title, description) '+ 
-                    `VALUES ("${latitude}", "${longitude}", "${title}", "${description}");`
+                    `VALUES ("${latitude}", "${longitude}", "${title}", "${description}");`;
+
         connection.query(query, function (error, results, fields) {
             if (error) {
                 console.log(`Error creating new marker: ${error.message}`);
-                res.status(500).end();
+                res.status(500);
             } 
             else {
                 console.log('New marker created succesfully.')
-                res.status(200).end();
+                res.status(200).json('Marker created succesfully.')
             }
         });
 
@@ -109,7 +109,7 @@ module.exports = {
         connection.query(query, function (error, results, fields) {
             if (error) {
                 console.log(`Error fetching the map markers from database: ${error.message}`);
-                res.status(500).end();
+                res.status(500);
             } 
             else {
                 // Reform data to geoJSON form
@@ -136,12 +136,11 @@ module.exports = {
                 }
                 catch(any){
                     console.log("Error reforming map markers data.");
-                    res.status(500).end();
+                    res.status(500);
                     return;
                 }
                 
-                res.status(200);
-                res.json(geoJsonData);
+                res.status(200).json(geoJsonData);
             }
         });
 
@@ -175,6 +174,7 @@ module.exports = {
                 res.json(results);
             }
         });
+
     } // fetchMarkersInfo()
 
 
@@ -186,10 +186,10 @@ function validateInput (input) {
         const data = input.data;
 
         if (data.title.length < 1 || data.title.length > 25){
-            return "Title length should be 1-25 characters";
+            return "title";
         }
         else if (data.description.length < 1 || data.description.length > 200){
-            return "Description length should be 1-200 characters";
+            return "description";
         }
         else {
             return;

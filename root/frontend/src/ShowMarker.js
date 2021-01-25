@@ -1,6 +1,6 @@
 import React from 'react';
-import EditMarker from './EditMarker';
 import './ShowMarker.css';
+import EditMarker from './EditMarker';
 import DeleteMarker from './DeleteMarker';
 
 export default class ShowMarker extends React.Component {
@@ -37,14 +37,14 @@ export default class ShowMarker extends React.Component {
         if(isEditingMarker){
             return(
                 <div>
-                    <EditMarker marker={this.props.marker} save={this.handleSave} cancel={this.handleCancel}/>
+                    <EditMarker marker={this.props.marker} handleSave={this.handleSave} handleCancel={this.handleCancel}/>
                 </div>
             );
         }
         else if (isDeletingMarker){
             return(
                 <div>
-                    <DeleteMarker marker={this.props.marker} delete={this.handleDelete} cancel={this.handleCancel}/>
+                    <DeleteMarker marker={this.props.marker} handleDelete={this.handleDelete} handleCancel={this.handleCancel}/>
                 </div>
             );
         }
@@ -59,18 +59,19 @@ export default class ShowMarker extends React.Component {
                             <tbody>
                                 <tr>
                                     <td>
-                                        <h2>{marker.properties.title}</h2>
+                                        <h2 className='marker-title'>{marker.properties.title}</h2>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <p>{marker.properties.description}</p>
+                                        <p className='marker-description'>{marker.properties.description}</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td>
-                                        <button onClick={(e)=>{this.setState({isEditingMarker: true})}}>Muokkaa</button>
-                                        <button onClick={(e) =>{this.setState({isDeletingMarker: true})}}>Poista</button>
+                                        <br/>
+                                        <button className='edit-btn' onClick={(e)=>{this.setState({isEditingMarker: true})}}>Muokkaa</button>
+                                        <button className='delete-btn' onClick={(e) =>{this.setState({isDeletingMarker: true})}}>Poista</button>
                                     </td>
                                 </tr>
                             </tbody>

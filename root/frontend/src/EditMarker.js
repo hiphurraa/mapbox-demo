@@ -9,7 +9,8 @@ export default class EditMarker extends React.Component {
         this.saveMarker = this.saveMarker.bind(this);
         this.state = {
             title: this.props.marker.properties.title,
-            description: this.props.marker.properties.description
+            description: this.props.marker.properties.description,
+            isLoading: false
         };
     }
 
@@ -39,11 +40,9 @@ export default class EditMarker extends React.Component {
         fetch(`http://127.0.0.1:3001/markers/edit/${markerId}`, requestOptions)
             .then(response => response.json())
             .then(data=>{
-                this.props.save();
+                this.props.handleSave();
             })
             .catch(error=>{});
-
-    
     }
 
     handleChange(e){
@@ -55,7 +54,7 @@ export default class EditMarker extends React.Component {
     render() {
 
         return(
-        <div className="newMarker-container">
+        <div className="editMarker-container">
             <fieldset>
                 <legend>Muokkaa merkkiä:</legend>
                 <table>
@@ -76,8 +75,9 @@ export default class EditMarker extends React.Component {
                         </tr>
                         <tr>
                             <td>
+                                <br/>
                                 <button className="save-btn" onClick={this.saveMarker}>Tallenna</button>
-                                <button className="cancel-btn" onClick={(e) =>{this.props.cancel()}}>Peruuta</button>
+                                <button className="cancel-btn" onClick={(e) =>{this.props.handleCancel()}}>Peruuta</button>
                             </td>
                         </tr>
                     </tbody>

@@ -1,0 +1,55 @@
+.deleteMarker-container {
+    display: inline-block;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    margin: 50px;
+    background-color: #6b5959;
+    color: #ffffff;
+    z-index: 1 !important;
+    padding: .5rem;
+    font-weight: bold;
+    border-radius: .5rem;;
+}
+
+fieldset{
+  padding: 1rem;
+}
+
+.delete-warning {
+    color: #aa0c0c;
+}
+
+.delete-btn {
+    color: #dddddd;
+    background-color: #f44336;
+    border: solid black 1px;
+    border-radius: .4rem;
+    padding: .25rem;
+    font-weight: bold;
+}
+
+.cancel-btn {
+    color: #dddddd;
+    background-color: #555555;
+    border: solid black 1px;
+    border-radius: .4rem;
+    padding: .25rem;
+    font-weight: bold;
+  }
+
+.marker-title {
+    color: rgb(14, 0, 141);
+  }
+
+@media screen and (max-width: 1024px) {
+  .deleteMarker-container {
+    margin: 25px;
+  }
+}
+
+@media screen and (max-width: 768px) {
+  .deleteMarker-container {
+    margin: 0px;
+  }
+}

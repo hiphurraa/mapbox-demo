@@ -12,12 +12,35 @@
     border-radius: .5rem;;
 }
 
-h2{
-  color: rgb(141, 21, 0);
-}
-
 fieldset{
   padding: 1rem;
+  color: #ffffff;
+}
+
+.save-btn {
+  color: #dddddd;
+  background-color: #4CAF50;
+  border: solid black 1px;
+  border-radius: .4rem;
+  padding: .25rem;
+  font-weight: bold;
+}
+
+.save-btn:hover {
+  background-color: #4CAF50;
+}
+
+.cancel-btn {
+  color: #dddddd;
+  background-color: #555555;
+  border: solid black 1px;
+  border-radius: .4rem;
+  padding: .25rem;
+  font-weight: bold;
+}
+
+.cancel-btn:hover {
+  background-color: #555555;
 }
 
 @media screen and (max-width: 1024px) {

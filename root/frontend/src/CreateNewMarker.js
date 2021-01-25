@@ -11,7 +11,8 @@ export default class CreateNewMarker extends React.Component {
             title: '',
             description: '',
             badInput: false,
-            error: ''
+            error: '',
+            isLoading: false
         };
     }
 
@@ -24,6 +25,7 @@ export default class CreateNewMarker extends React.Component {
     }
 
     saveMarker() {
+        this.setState({isLoading: true});
         const newMarkerData = {
             title: this.state.title,
             description: this.state.description,
@@ -36,19 +38,30 @@ export default class CreateNewMarker extends React.Component {
             body: JSON.stringify({ data: newMarkerData})
         };
         fetch('http://127.0.0.1:3001/markers/create', requestOptions)
-            .then((response) => {
-                console.log(response.status);
-                if (response.status === 200){
-                    this.setState({badInput: false, error: ''});
-                    this.props.handleSave(this.props.coordinates);
-                    return response.json();
+            .then(response => response.json())
+            .then(response => {
+                if (response.badInput){
+                    let msg = '';
+                    switch (response.badInput){
+                        case 'title':
+                            msg = 'Otsikon tulee olla 1-25 merkkiä.';
+                            break;
+                        case 'description':
+                            msg = 'Kuvauksen tulee olla 1-200 merkkiä.';
+                            break;
+                        default:
+                            msg = '';
+                    }
+                    this.setState({badInput: msg, isLoading: false});
                 }
-                else if (response.status === 400){
-                    this.setState({badInput: true});
+                else {
+                    this.setState({badInput: false, error: '', isLoading: false});
+                    this.props.handleSave(this.props.coordinates);
                 }
             })
             .catch((error)=>{
-                this.setState({error: 'Odottamaton virhe!'});
+                console.log(error);
+                this.setState({error: 'Odottamaton virhe!', isLoading: false});
             })
 
     }
@@ -61,7 +74,7 @@ export default class CreateNewMarker extends React.Component {
 
     render() {
 
-        const { badInput } = this.state;
+        const { badInput, error, isLoading } = this.state;
 
         return(
         <div className="newMarker-container">
@@ -73,23 +86,26 @@ export default class CreateNewMarker extends React.Component {
                     <tbody>
                         <tr>
                             <td>
-                                <p className='errorMsg'>{this.state.error}</p>
+                                <p className='errorMsg'>{error? error : ''}</p>
+                                <p className='badInputMsg'>{badInput? badInput : ''}</p>
+                                <p className='loadingMsg'>{isLoading? 'Tallennetaan...' : ''}</p>
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <label>Otsikko: {badInput? '(1-25 merkkiä)' : ''}</label><br/>
+                                <label>Otsikko:</label><br/>
                                 <input type="text" name="title" value={this.state.title} onChange={this.handleChange}></input>
                             </td>
                         </tr>
                         <tr>
                         <td>
-                            <label>Kuvaus: {badInput? '(1-200 merkkiä)' : ''}</label><br/>
+                            <label>Kuvaus:</label><br/>
                             <input type="text" name="description" value={this.state.description} onChange={this.handleChange}></input>
                             </td>
                         </tr>
                         <tr>
                             <td>
+                                <br/>
                                 <button className="save-btn" onClick={this.saveMarker}>Tallenna</button>
                                 <button className="cancel-btn" onClick={(e) =>{this.props.cancel()}}>Peruuta</button>
                             </td>

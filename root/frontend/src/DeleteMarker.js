@@ -6,7 +6,8 @@ export default class DeleteMarker extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            title: this.props.marker.properties.title
+            title: this.props.marker.properties.title,
+            isLoading: false
         };
     }
 
@@ -19,31 +20,34 @@ export default class DeleteMarker extends React.Component {
     }
 
     deleteMarker = () => {
+        this.setState({isLoading: true})
 
         const markerId = this.props.marker.properties.id;
-
         fetch(`http://127.0.0.1:3001/markers/delete/${markerId}`, {method: 'DELETE'})
             .then((response) => {
                 if (response.status === 200){
-                    this.props.delete();
+                    this.props.handleDelete();
                 }
                 else {
                     
                 }
             });
+
+        //this.setState({isLoading: false});
     }
 
     cancel () {
-        this.props.cancel();
+        this.props.handleCancel();
     }
 
 
     render() {
 
         const title = this.props.marker.properties.title;
+        const {isLoading} = this.state;
 
         return(
-        <div className="newMarker-container">
+        <div className="deleteMarker-container">
             <fieldset>
                 <legend>Poista merkki:</legend>
                 <table>
@@ -52,18 +56,19 @@ export default class DeleteMarker extends React.Component {
                     <tbody>
                         <tr>
                             <td>
-                                <p>{title}</p>
+                                <h2 className='delete-warning'>{isLoading? 'Poistetaan...' : 'Haluatko varmasti poistaa merkin?'}</h2>
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <h2>Haluatko varmasti poistaa merkin?</h2>
+                                <p className='marker-title'>({title})</p>
                             </td>
                         </tr>
                         <tr>
                             <td>
-                                <button className="save-btn" onClick={this.deleteMarker}>Poista</button>
-                                <button className="cancel-btn" onClick={(e) =>{this.cancel()}}>Peruuta</button>
+                                <br/>
+                                <button disabled={isLoading} className="delete-btn" onClick={this.deleteMarker}>Poista</button>
+                                <button disabled={isLoading} className="cancel-btn" onClick={(e) =>{this.cancel()}}>Peruuta</button>
                             </td>
                         </tr>
                     </tbody>
