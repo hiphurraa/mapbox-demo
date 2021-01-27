@@ -1,42 +1,43 @@
 "use strict";
 
 var mysql = require('mysql');
-var {port, user, password} = require('../mysql_settings.json');
+var {MYSQL_HOST, MYSQL_PORT, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DATABASE} = require('../mysql_settings.json');
+
 var connection = mysql.createConnection({
-  host: "localhost",
-  database: "mapmarker",
-  port: port,
-  user: user,
-  password: password
+  host: MYSQL_HOST,
+  port: MYSQL_PORT,
+  user: MYSQL_USER,
+  password: MYSQL_PASSWORD,
+  database: MYSQL_DATABASE
 });
 
 module.exports = {
 
-    deleteMarker : function (req, res) {
-        var query = '';
-        var id = '';
-        try {   
-            id = req.params.id;
-            query = `DELETE FROM marker WHERE id = ${id};`;
-        }
-        catch(any){
-            console.log('Error deleting marker: bad request')
-            res.status(400);
+    createNewMarker: function (req, res) {
+        const badInput = validateInput(req.body);
+        if (badInput){
+            console.log("Creating new marker attempt failed: -" + JSON.stringify(badInput));
+            res.status(400).json({'badInput': badInput, 'status': 400});
             return;
         }
 
+        const { latitude, longitude, title, description } = req.body.data;
+
+        var query = 'INSERT INTO mapmarker.marker (latitude, longitude, title, description) '+ 
+                    `VALUES ("${latitude}", "${longitude}", "${title}", "${description}");`;
+
         connection.query(query, function (error, results, fields) {
             if (error) {
-                console.log(`Error deleting marker: ${error.message}`);
+                console.log(`Error creating new marker: ${error.message}`);
                 res.status(500);
             } 
             else {
-                console.log('Marker deleted succesfully.')
-                res.status(200).json('Marker deleted succesfully.');
+                console.log('New marker created succesfully.')
+                res.status(200).json('Marker created succesfully.')
             }
         });
 
-    }, // deleteMarker()
+    }, // createNewMarker()
 
 
     editMarker: function (req, res) {
@@ -81,31 +82,31 @@ module.exports = {
     }, // editMarker()
 
 
-    createNewMarker: function (req, res) {
-        const badInput = validateInput(req.body);
-        if (badInput){
-            console.log("Creating new marker attempt failed: -" + JSON.stringify(badInput));
-            res.status(400).json({'badInput': badInput, 'status': 400});
+    deleteMarker : function (req, res) {
+        var query = '';
+        var id = '';
+        try {   
+            id = req.params.id;
+            query = `DELETE FROM marker WHERE id = ${id};`;
+        }
+        catch(any){
+            console.log('Error deleting marker: bad request')
+            res.status(400);
             return;
         }
 
-        const { latitude, longitude, title, description } = req.body.data;
-
-        var query = 'INSERT INTO mapmarker.marker (latitude, longitude, title, description) '+ 
-                    `VALUES ("${latitude}", "${longitude}", "${title}", "${description}");`;
-
         connection.query(query, function (error, results, fields) {
             if (error) {
-                console.log(`Error creating new marker: ${error.message}`);
+                console.log(`Error deleting marker: ${error.message}`);
                 res.status(500);
             } 
             else {
-                console.log('New marker created succesfully.')
-                res.status(200).json('Marker created succesfully.')
+                console.log('Marker deleted succesfully.')
+                res.status(200).json('Marker deleted succesfully.');
             }
         });
 
-    }, // createNewMarker()
+    }, // deleteMarker()
 
 
     // Fetch map markers from database and respond with geoJSON data
